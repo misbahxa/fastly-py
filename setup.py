@@ -21,6 +21,11 @@ setup(
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities"
     ],
+    entry_points = {
+        'console_scripts': [
+            'fastly = fastly.cli:main'    
+        ]
+    },
     scripts=[
         "bin/purge_service",
         "bin/purge_key",
