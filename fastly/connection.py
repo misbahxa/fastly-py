@@ -22,7 +22,7 @@ class Connection(object):
         self.default_headers = { 'User-Agent': 'fastly-py-v{}'.format(__version__) }
 
     def request(self, method, path, body=None, headers=None):
-
+        print path
         if not headers:
             headers = {}
 

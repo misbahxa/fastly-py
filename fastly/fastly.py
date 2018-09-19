@@ -1,11 +1,12 @@
 from __future__ import absolute_import
 
 import os
+import urllib
 
 from fastly.connection import Connection
 from fastly.auth import KeyAuthenticator, SessionAuthenticator
 from fastly.errors import AuthenticationError
-from fastly.models import Service, Version, Domain, Backend, Settings, Condition, Header, Snippet, Dictionary, DictionaryItems, DictionaryItem
+from fastly.models import Service, Version, Domain, Backend, Settings, Condition, Header, Snippet, Dictionary, DictionaryItem
 
 
 class API(object):
@@ -112,8 +113,9 @@ class API(object):
     def dictionary(self, service_id, version, name):
         return Dictionary.find(self.conn, service_id=service_id, version=version, name=name)
 
-    def dictionaryitems(self, service_id, version, id):
-        return DictionaryItems.find(self.conn, service_id=service_id, version=version, id=id)
+    def dictionaryitems(self, service_id, version, dictionary_id):
+        return DictionaryItem.list(self.conn, service_id=service_id, version=version, dictionary_id=dictionary_id)
         
-    def dictionaryitem(self, service_id, version, id, key):
-        return DictionaryItem.find(self.conn, service_id=service_id, version=version, id=id, key=key)
+    def dictionaryitem(self, service_id, version, dictionary_id, item_key):
+        item_key = urllib.quote(item_key)
+        return DictionaryItem.find(self.conn, service_id=service_id, version=version, dictionary_id=dictionary_id, item_key=item_key)

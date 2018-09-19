@@ -12,6 +12,7 @@ class Model(object):
 
     @classmethod
     def query(cls, conn, pattern, method, suffix='', body=None, **kwargs):
+        print(pattern, method, suffix, body, kwargs)
         url = Template(pattern).substitute(**kwargs)
         url += suffix
 
@@ -42,7 +43,6 @@ class Model(object):
 
         self._original_attrs = data
         self.attrs = data
-
 
     @classmethod
     def list(cls, conn, **kwargs):
@@ -215,10 +215,14 @@ class Dictionary(Model):
     COLLECTION_PATTERN = Version.COLLECTION_PATTERN + '/$version/dictionary'
     INSTANCE_PATTERN = COLLECTION_PATTERN + '/$name'
 
-class DictionaryItems(Model):
-    COLLECTION_PATTERN = Service.COLLECTION_PATTERN + '/$service_id/dictionary'
-    INSTANCE_PATTERN = COLLECTION_PATTERN + '/$id/items'
-
 class DictionaryItem(Model):
-    COLLECTION_PATTERN = Service.COLLECTION_PATTERN + '/$service_id/dictionary'
-    INSTANCE_PATTERN = COLLECTION_PATTERN + '/$id/item/$key'
+    COMMON_PATTERN = Service.COLLECTION_PATTERN + '/$service_id/dictionary/$dictionary_id'
+    COLLECTION_PATTERN = COMMON_PATTERN + '/items'
+    INSTANCE_PATTERN = COMMON_PATTERN + '/item/$item_key'
+
+    def delete(self):
+        resp, data = self._query('DELETE')
+        return data
+
+    def add(self, body):
+        resp, data = self._query('POST', body=body)
