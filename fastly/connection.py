@@ -22,7 +22,7 @@ class Connection(object):
         self.default_headers = { 'User-Agent': 'fastly-py-v{}'.format(__version__) }
 
     def request(self, method, path, body=None, headers=None):
-
+        
         if not headers:
             headers = {}
 
@@ -58,5 +58,9 @@ class Connection(object):
             raise errors.BadRequestError(body)
         elif response.status == 404:
             raise errors.NotFoundError()
+        elif response.status == 409:
+            raise errors.ConflictError()
+        elif response.status == 422:
+            raise errors.UnprocessableEntityError()
 
         return (response, data)

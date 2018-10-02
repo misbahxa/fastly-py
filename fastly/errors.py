@@ -19,3 +19,10 @@ class BadRequestError(FastlyError):
 
 class NotFoundError(FastlyError):
     pass
+
+class ConflictError(FastlyError):
+    pass
+
+
+class UnprocessableEntityError(FastlyError):
+    pass
