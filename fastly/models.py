@@ -43,6 +43,10 @@ class Model(object):
         self._original_attrs = data
         self.attrs = data
 
+    @classmethod
+    def post(cls, conn, **kwargs):
+        resp, data = cls.query(conn, cls.COLLECTION_PATTERN, 'POST', **kwargs)
+        return data
 
     @classmethod
     def list(cls, conn, **kwargs):
@@ -111,6 +115,13 @@ class Version(Model):
     def deactivate(self):
         resp, data = self._query('PUT', '/deactivate')
         return data
+
+    @classmethod
+    def active(cls, conn, **kwargs):
+        resp, data = cls.query(conn, cls.COLLECTION_PATTERN + '/active', 'GET', **kwargs)
+        obj = cls.construct_instance(data)
+        obj.conn = conn
+        return obj
 
     def clone(self):
         resp, data = self._query('PUT', '/clone')
@@ -211,14 +222,27 @@ class Snippet(Model):
     COLLECTION_PATTERN = Version.COLLECTION_PATTERN + '/$version/snippet'
     INSTANCE_PATTERN = COLLECTION_PATTERN + '/$name'
 
+    def delete(self):
+        resp, data = self._query('DELETE')
+        return data
+
 class Dictionary(Model):
     COLLECTION_PATTERN = Version.COLLECTION_PATTERN + '/$version/dictionary'
     INSTANCE_PATTERN = COLLECTION_PATTERN + '/$name'
 
 class DictionaryItems(Model):
-    COLLECTION_PATTERN = Service.COLLECTION_PATTERN + '/$service_id/dictionary'
-    INSTANCE_PATTERN = COLLECTION_PATTERN + '/$id/items'
+    COMMON_PATTERN = Service.COLLECTION_PATTERN + '/$service_id/dictionary/$dictionary_id'
+    COLLECTION_PATTERN = COMMON_PATTERN + '/items'
 
 class DictionaryItem(Model):
-    COLLECTION_PATTERN = Service.COLLECTION_PATTERN + '/$service_id/dictionary'
-    INSTANCE_PATTERN = COLLECTION_PATTERN + '/$id/item/$key'
+    COMMON_PATTERN = Service.COLLECTION_PATTERN + '/$service_id/dictionary/$dictionary_id'
+    COLLECTION_PATTERN = COMMON_PATTERN + '/item'
+    INSTANCE_PATTERN = COLLECTION_PATTERN + '/$item_key'
+
+    def delete(self):
+        resp, data = self._query('DELETE')
+        return data
+
+    def listall(self, body):
+        COLLECTION_PATTERN = COMMON_PATTERN + '/items'
+        resp, data = self._collection_query('GET')
