@@ -26,10 +26,5 @@ setup(
         'console_scripts': [
             'fastlycli = cli.cli:entrypoint',
         ]
-    },
-    scripts=[
-        "bin/purge_service",
-        "bin/purge_key",
-        "bin/purge_url"
-    ]
+    }
 )
