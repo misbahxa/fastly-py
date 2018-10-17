@@ -9,7 +9,7 @@ api = fastly.API(key=os.environ['FASTLY_API_KEY'])
 @click.option('--version', required=True)
 def listall(service, version):
     snippet_line = "{id},{name},{priority},{type},{updated_at},{dynamic}"
-    print snippet_line.replace('{','').replace('}','')
+    print(snippet_line.replace('{','').replace('}',''))
     for snippet in api.snippets(service, version):
         print( snippet_line.format(
             **snippet.attrs

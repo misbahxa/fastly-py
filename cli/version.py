@@ -8,7 +8,7 @@ api = fastly.API(key=os.environ['FASTLY_API_KEY'])
 @click.option('--service', envvar='FASTLY_SERVICE_ID')
 def listall(service):
     version_line = "{number},{active},{locked},{created_at},{updated_at}"
-    print version_line.replace('{','').replace('}','')
+    print(version_line.replace('{','').replace('}',''))
     for version in api.versions(service):
         print( version_line.format(
             **version.attrs
