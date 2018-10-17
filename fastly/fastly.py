@@ -1,11 +1,12 @@
 from __future__ import absolute_import
 
 import os
+import urllib
 
 from fastly.connection import Connection
 from fastly.auth import KeyAuthenticator, SessionAuthenticator
 from fastly.errors import AuthenticationError
-from fastly.models import Service, Version, Domain, Backend, Settings, Condition, Header, Snippet, Dictionary, DictionaryItems, DictionaryItem
+from fastly.models import Service, Version, Domain, Backend, Settings, Condition, Header, Snippet, Dictionary, DictionaryItem, DictionaryItems
 
 
 class API(object):
@@ -33,9 +34,12 @@ class API(object):
 
     def versions(self, service_id):
         return Version.list(self.conn, service_id=service_id)
-
+    
     def version(self, service_id, version):
         return Version.find(self.conn, service_id=service_id, number=version)
+
+    def activeversion(self, service_id):
+        return Version.active(self.conn, service_id=service_id)
 
     def domains(self, service_id, version):
         return Domain.list(self.conn, service_id=service_id, version=version)
@@ -106,14 +110,21 @@ class API(object):
     def snippet(self, service_id, version, name):
         return Snippet.find(self.conn, service_id=service_id, version=version, name=name)
 
+    def snippetpost(self, service_id, version, body):
+        return Snippet.post(self.conn, service_id=service_id, version=version, body=body)
+
     def dictionaries(self, service_id, version):
         return Dictionary.list(self.conn, service_id=service_id, version=version)
 
     def dictionary(self, service_id, version, name):
         return Dictionary.find(self.conn, service_id=service_id, version=version, name=name)
 
-    def dictionaryitems(self, service_id, version, id):
-        return DictionaryItems.find(self.conn, service_id=service_id, version=version, id=id)
+    def dictionaryitems(self, service_id, version, dictionary_id):
+        return DictionaryItems.list(self.conn, service_id=service_id, version=version, dictionary_id=dictionary_id)
         
-    def dictionaryitem(self, service_id, version, id, key):
-        return DictionaryItem.find(self.conn, service_id=service_id, version=version, id=id, key=key)
+    def dictionaryitem(self, service_id, version, dictionary_id, item_key):
+        item_key = urllib.quote(item_key)
+        return DictionaryItem.find(self.conn, service_id=service_id, version=version, dictionary_id=dictionary_id, item_key=item_key)
+
+    def dictionaryitempost(self, service_id, version, dictionary_id, body):
+        return DictionaryItem.post(self.conn, service_id=service_id, version=version, dictionary_id=dictionary_id, body=body)
