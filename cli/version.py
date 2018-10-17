@@ -1,6 +1,7 @@
 import os
 import click
 import fastly
+from cli.handlers import outputsingle
 
 api = fastly.API(key=os.environ['FASTLY_API_KEY'])
 
@@ -30,11 +31,7 @@ def activeversion(service):
 @click.option('--version', required=True)
 def show(service, version):
     try:
-        version_line = "Number: {number}\nActive: {active}\nLocked: {locked}\nCreated_at: {created_at}\nUpdated_at: {updated_at}"
-        print( version_line.format( 
-            **api.version(service, version).attrs
-            )
-        )
+        outputsingle(api.version(service, version).attrs)
     except fastly.errors.NotFoundError:
         print("Version %s does not exists." % version)
 
